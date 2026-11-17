@@ -2,7 +2,8 @@
   "redirects": [
     { "source": "/bra-up01", "destination": "/bra-up01/", "permanent": false },
     { "source": "/bra-up02", "destination": "/bra-up02/", "permanent": false },
-    { "source": "/bra-up03", "destination": "/bra-up03/", "permanent": false }
+    { "source": "/bra-up03", "destination": "/bra-up03/", "permanent": false },
+    { "source": "/membersarea", "destination": "/membersarea/", "permanent": false }
   ],
   "rewrites": [
     { "source": "/senior", "destination": "/index.html" },

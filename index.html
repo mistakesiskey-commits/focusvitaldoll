@@ -620,11 +620,20 @@ details.faq-item .faq-resposta{padding:0 18px 18px;font-size:15.5px;color:var(--
       var tentativa = video.play();
       if(tentativa && tentativa.catch) tentativa.catch(function(){});
       ouvir.addEventListener('click', function(){
+        var jaAndou = video.currentTime > 0.3;
         video.muted = false;
         video.volume = 1;
+        video.currentTime = 0;
         ouvir.hidden = true;
+        fill.style.width = '0%';
         var p = video.play();
-        if(p && p.catch) p.catch(function(){});
+        if(p && p.then){
+          p.then(function(){
+            if(jaAndou && video.currentTime > 0.3) video.currentTime = 0;
+          }).catch(function(){});
+        } else if(p && p.catch){
+          p.catch(function(){});
+        }
       });
       video.addEventListener('timeupdate', barra);
       video.addEventListener('loadedmetadata', barra);

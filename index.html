@@ -146,9 +146,7 @@ img.lazy-fade.loaded{opacity:1;}
 .vsl video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;pointer-events:none;}
 .vsl-ouvir{position:absolute;inset:0;z-index:2;border:0;padding:0;margin:0;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .vsl-ouvir img{width:88%;height:auto;pointer-events:none;}
-.vsl-ouvir[hidden],.vsl-pausa[hidden]{display:none;}
-.vsl-pausa{position:absolute;left:12px;bottom:22px;z-index:3;width:44px;height:44px;border:0;border-radius:999px;background:#1890FF;color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.35);padding:0;}
-.vsl-pausa svg{width:18px;height:18px;fill:#fff;display:block;}
+.vsl-ouvir[hidden]{display:none;}
 .vsl-barra{position:absolute;left:0;right:0;bottom:0;z-index:4;height:10px;background:rgba(8,93,138,.35);pointer-events:none;}
 .vsl-barra span{display:block;height:100%;width:0;background:#085D8A;}
 @media (prefers-reduced-motion: no-preference){
@@ -604,9 +602,6 @@ details.faq-item .faq-resposta{padding:0 18px 18px;font-size:15.5px;color:var(--
         <button type="button" class="vsl-ouvir" id="vsl-ouvir" aria-label="Tap to listen">
           <img src="/video/play.png" alt="" width="1080" height="800">
         </button>
-        <button type="button" class="vsl-pausa" id="vsl-pausa" hidden aria-label="Pause">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg>
-        </button>
         <div class="vsl-barra" aria-hidden="true"><span id="vsl-fill"></span></div>
       </div>
     </div>
@@ -614,50 +609,24 @@ details.faq-item .faq-resposta{padding:0 18px 18px;font-size:15.5px;color:var(--
     (function(){
       var video = document.getElementById('vsl-video');
       var ouvir = document.getElementById('vsl-ouvir');
-      var pausa = document.getElementById('vsl-pausa');
       var fill = document.getElementById('vsl-fill');
-      if(!video || !ouvir || !pausa || !fill) return;
-      var comSom = false;
-      var iconePlay = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5z"></path></svg>';
-      var iconePausa = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg>';
+      if(!video || !ouvir || !fill) return;
       function barra(){
         var d = video.duration;
         fill.style.width = (d && isFinite(d)) ? ((video.currentTime / d) * 100) + '%' : '0%';
-      }
-      function icone(){
-        var parado = video.paused || video.ended;
-        pausa.innerHTML = parado ? iconePlay : iconePausa;
-        pausa.setAttribute('aria-label', parado ? 'Play' : 'Pause');
       }
       video.muted = true;
       video.defaultMuted = true;
       var tentativa = video.play();
       if(tentativa && tentativa.catch) tentativa.catch(function(){});
       ouvir.addEventListener('click', function(){
-        comSom = true;
         video.muted = false;
         video.volume = 1;
         ouvir.hidden = true;
-        pausa.hidden = false;
         var p = video.play();
         if(p && p.catch) p.catch(function(){});
-        icone();
-      });
-      pausa.addEventListener('click', function(e){
-        e.stopPropagation();
-        if(!comSom) return;
-        if(video.ended){
-          video.currentTime = 0;
-          video.play();
-          return;
-        }
-        if(video.paused) video.play();
-        else video.pause();
       });
       video.addEventListener('timeupdate', barra);
-      video.addEventListener('play', icone);
-      video.addEventListener('pause', icone);
-      video.addEventListener('ended', function(){ barra(); icone(); });
       video.addEventListener('loadedmetadata', barra);
       video.addEventListener('contextmenu', function(e){ e.preventDefault(); });
     })();

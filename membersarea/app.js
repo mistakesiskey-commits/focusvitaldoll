@@ -59,7 +59,7 @@
       peek: 5,
       price: '$9.90',
       anchor: 'Less than a movie ticket',
-      checkout: 'https://pay.hotmart.com/S107962007U?off=rfflogfw&utm_source=mb&utm_medium=area-de-membros&utm_campaign=memory&src=mb'
+      checkout: ''
     },
     {
       id: 'christmas',
@@ -79,7 +79,7 @@
       peek: 5,
       price: '$5.90',
       anchor: 'Less than a box of Christmas cookies',
-      checkout: 'https://pay.hotmart.com/J108127223T?off=ev6r4kgb&utm_source=mb&utm_medium=area-de-membros&utm_campaign=christmas&src=mb'
+      checkout: ''
     },
     {
       id: 'alzheimer',
@@ -103,7 +103,7 @@
       peek: 5,
       price: '$19',
       anchor: 'Less than one hour of professional care',
-      checkout: 'https://pay.hotmart.com/K108118568V?off=0qdo0nik&utm_source=mb&utm_medium=area-de-membros&utm_campaign=alzheimer&src=mb'
+      checkout: ''
     },
     {
       id: 'fall-proof',
@@ -127,7 +127,7 @@
       peek: 5,
       price: '$19',
       anchor: 'Less than a single physical therapy visit',
-      checkout: 'https://pay.hotmart.com/J108012942O?off=k0uxnsgw&utm_source=mb&utm_medium=area-de-membros&utm_campaign=fall-proof&src=mb'
+      checkout: ''
     },
     {
       id: 'bedridden',
@@ -147,7 +147,7 @@
       peek: 5,
       price: '$6.90',
       anchor: 'About the price of a coffee',
-      checkout: 'https://pay.hotmart.com/X108060189R?off=p6lqh7vg&utm_source=mb&utm_medium=area-de-membros&utm_campaign=bedridden&src=mb'
+      checkout: ''
     },
     {
       id: 'lifetime',
@@ -168,7 +168,7 @@
       peek: 4,
       price: '$4.90',
       anchor: 'Pay once, keep it forever',
-      checkout: 'https://pay.hotmart.com/P107962058O?off=30n23zs5&utm_source=mb&utm_medium=area-de-membros&utm_campaign=lifetime&src=mb'
+      checkout: ''
     }
   ];
 
@@ -223,10 +223,12 @@
       '<em>' + ICON.read + 'Read Now · ' + meta.pages + ' pages</em></div></a>';
   }
 
+  var SOON = 'Ainda não está disponível';
+  function soonNote() { return '<p class="soon-note">' + SOON + '</p>'; }
   function lockedCard(o) {
-    return '<article class="prod locked"><a class="prod-img" href="#/unlock/' + o.id + '" aria-label="' + esc(o.title) + '"><img src="' + o.banner + '" alt="" width="960" height="536" loading="lazy" decoding="async"><span class="lock-ic">' + ICON.lock + '</span></a>' +
+    return '<article class="prod locked"><a class="prod-img" href="#/unlock/' + o.id + '" aria-label="' + esc(o.title) + '"><img src="' + o.banner + '" alt="" width="960" height="536" loading="lazy" decoding="async"><span class="soon-cover">' + SOON + '</span></a>' +
       '<div class="prod-body"><span class="tag lck">' + ICON.lock + 'Locked</span><h3>' + esc(o.title) + '</h3><p>' + esc(o.card) + '</p>' +
-      '<a class="btn btn-gold" href="#/unlock/' + o.id + '">Unlock Now</a></div></article>';
+      soonNote() + '</div></article>';
   }
 
   /* Produto secundário que a pessoa já tem: abre o material em vez da oferta. */
@@ -355,8 +357,8 @@
     }).join('');
     var addons = ownedOffers().reduce(function (all, o) { return all.concat(o.docs.filter(function (d) { return !all.some(function (x) { return x.id === d.id; }); })); }, []);
     var promos = lockedOffers().map(function (o) {
-      return '<a class="promo" href="#/unlock/' + o.id + '"><div class="prod-img"><img src="' + o.banner + '" alt="" width="960" height="536" decoding="async"><span class="lock-ic">' + ICON.lock + '</span></div>' +
-        '<div class="promo-b"><small>Recommended for you</small><strong>' + esc(o.title) + '</strong><span>See What&rsquo;s Inside</span></div></a>';
+      return '<a class="promo" href="#/unlock/' + o.id + '"><div class="prod-img"><img src="' + o.banner + '" alt="" width="960" height="536" decoding="async"><span class="soon-cover">' + SOON + '</span></div>' +
+        '<div class="promo-b"><small>Recommended for you</small><strong>' + esc(o.title) + '</strong><span>' + SOON + '</span></div></a>';
     }).join('');
 
     app.innerHTML = header(true) + '<main class="wrap">' +
@@ -543,7 +545,8 @@
   $('#vOut').addEventListener('click', function () { setZoom(zoom - 0.5); });
   $('#vClose').addEventListener('click', goBackOrHome);
   vCta.addEventListener('click', function (e) {
-    if (vCta.dataset.log && window.Care) { e.preventDefault(); window.Care.openLog(vCta.dataset.log); }
+    if (vCta.dataset.log && window.Care) { e.preventDefault(); window.Care.openLog(vCta.dataset.log); return; }
+    if (!vCta.getAttribute('href') || vCta.getAttribute('href') === '#') e.preventDefault();
   });
   window.addEventListener('resize', function () {
     if (viewer.hidden) return;
@@ -573,8 +576,7 @@
       '</div>' +
       '<div class="price"><div class="price-v"><small>One-time payment</small><strong>' + o.price + '</strong></div>' +
         '<em>' + esc(o.anchor) + '</em>' +
-        '<a class="btn btn-gold" href="' + o.checkout + '" rel="noopener">Unlock Now</a>' +
-        '<p class="sh-safe">' + ICON.shield + 'Secure checkout · Instant access here</p></div>';
+        '<p class="soon-note">' + SOON + '</p></div>';
     sheet.hidden = false;
     document.body.classList.add('lock');
     sheetBody.scrollTop = 0;
@@ -587,7 +589,7 @@
     if (pk && sheetOffer) {
       var o = sheetOffer, items = [];
       for (var k = 1; k <= o.peek; k++) {
-        items.push({ src: peekUrl(o.id, k), title: 'A peek inside', cta: { href: o.checkout, label: 'Unlock all for ' + o.price } });
+        items.push({ src: peekUrl(o.id, k), title: 'A peek inside', cta: { href: '#', label: SOON } });
       }
       openGallery({ key: 'peek-' + o.id, items: items, start: +pk.dataset.peek - 1 });
     }

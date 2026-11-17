@@ -380,7 +380,7 @@
     var a = s.a, lk = locked(a), o = actOffer(a);
     return '<button type="button" class="cr-sug' + (lk ? ' lk' : '') + '" data-act="' + a.key + '">' +
       '<span class="cr-sug-img"><img src="' + thumb(a) + '" alt="" width="480" height="288" loading="lazy" decoding="async">' +
-      (lk ? '<span class="cr-sug-lk">' + BD.ICON.lock + 'Unlock</span>' : '') + '</span>' +
+      (lk ? '<span class="cr-sug-lk">Ainda não está disponível</span>' : '') + '</span>' +
       '<span class="cr-sug-b"><small style="color:' + CATS[a.cat].color + '">' + esc(lk && o ? 'From ' + o.title : CATS[a.cat].label) + '</small>' +
       '<strong>' + esc(a.t) + '</strong><em>' + esc(s.why) + '</em></span></button>';
   }
@@ -464,8 +464,8 @@
 
   function promoCard(o, why) {
     if (!o) return '';
-    return '<a class="promo cr-promo" href="#/unlock/' + o.id + '"><div class="prod-img"><img src="' + o.banner + '" alt="" width="960" height="536" loading="lazy" decoding="async"><span class="lock-ic">' + BD.ICON.lock + '</span></div>' +
-      '<div class="promo-b"><small>Recommended · ' + esc(why) + '</small><strong>' + esc(o.title) + '</strong><span>See What&rsquo;s Inside</span></div></a>';
+    return '<a class="promo cr-promo" href="#/unlock/' + o.id + '"><div class="prod-img"><img src="' + o.banner + '" alt="" width="960" height="536" loading="lazy" decoding="async"><span class="soon-cover">Ainda não está disponível</span></div>' +
+      '<div class="promo-b"><small>Recommended · ' + esc(why) + '</small><strong>' + esc(o.title) + '</strong><span>Ainda não está disponível</span></div></a>';
   }
 
   function viewResidents() {
@@ -595,7 +595,7 @@
       out += '<div class="cr-ph' + (lk ? ' lk' : '') + '"><img src="' + BD.v(pr.cover) + '" alt="" width="300" height="424" loading="lazy">' +
         '<div class="cr-ph-b"><small>' + (lk ? BD.ICON.lock + 'Locked · ' + plural(all.length, pr.unit) : pr.offer ? BD.ICON.check + 'Unlocked' : BD.ICON.check + 'Included in your plan') + '</small>' +
         '<strong>' + esc(prodTitle(pr)) + '</strong>' +
-        (lk ? '<a class="cr-grp-btn" href="#/unlock/' + o.id + '">' + BD.ICON.lock + 'Unlock for ' + esc(o.price) + '</a>' :
+        (lk ? '<span class="cr-grp-btn soon-note">Ainda não está disponível</span>' :
           '<span class="cr-ph-bar"><i style="width:' + (n / all.length * 100).toFixed(1) + '%"></i></span><em>' + n + ' of ' + plural(all.length, pr.unit) + ' done</em>') +
         '</div></div>';
       var preview = f.prod === 'all' && !f.q && !f.notDone, cut = lk ? 3 : 5;
@@ -676,7 +676,7 @@
       '<h2>' + esc(a.t) + '</h2>' +
       (hasLvl(a) ? '<p class="cm-lvl">' + levelDots(a.lvl) + ['', 'Easy', 'Medium', 'Challenging'][a.lvl] + '</p>' : '') +
       (lk ? '<div class="cm-lockbox"><strong>Part of ' + esc(o.title) + '</strong><p>' + esc(o.card) + '</p>' +
-          '<button type="button" class="btn btn-gold" data-unlock="' + o.id + '">' + BD.ICON.lock + 'Unlock for ' + esc(o.price) + '</button></div>' :
+          '<p class="soon-note">Ainda não está disponível</p></div>' :
         '<p class="cm-done">' + (dm ? BD.ICON.check + 'Done ' + plural(dm.count, 'time') + ' · last ' + niceDate(dm.last).toLowerCase() + (lastLog && lastLog.who.length ? ' with ' + esc(names(lastLog.who)) : '') : 'Not tried yet') + '</p>' +
         '<div class="cr-2btn"><button type="button" class="btn btn-line" data-go="' + readHref(a) + '">' + BD.ICON.read + 'Open</button>' +
         '<button type="button" class="btn btn-sun" data-log-act="' + a.key + '"' + (forId ? ' data-for="' + forId + '"' : '') + '>' + BD.ICON.check + (a.cat === 'alz' ? 'Mark as used' : 'Mark as done') + '</button></div>') +
